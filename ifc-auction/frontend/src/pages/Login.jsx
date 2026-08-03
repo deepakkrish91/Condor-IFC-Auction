@@ -62,7 +62,7 @@ export default function Login() {
             CONDOR IFC
           </h1>
           <p className="font-rajdhani text-yellow-400 tracking-[0.3em] uppercase text-sm mt-1">
-            Auction 2025
+            Mega Auction 2026
           </p>
         </div>
 
