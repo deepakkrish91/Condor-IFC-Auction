@@ -1,59 +1,250 @@
+import { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import PlayerCard from './PlayerCard'
 
-function Particle({ color }) {
-  const x = (Math.random() - 0.5) * 600
-  const y = (Math.random() - 0.5) * 600
-  const size = Math.random() * 8 + 4
+/* ── Hammer sound via Web Audio API ── */
+function playHammerSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)()
+
+    function strike(startTime) {
+      // Impact thud
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.3, ctx.sampleRate)
+      const data = buf.getChannelData(0)
+      for (let i = 0; i < data.length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.04))
+      }
+      const src = ctx.createBufferSource()
+      src.buffer = buf
+      const gain = ctx.createGain()
+      gain.gain.setValueAtTime(1.2, startTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.28)
+      const filter = ctx.createBiquadFilter()
+      filter.type = 'lowpass'
+      filter.frequency.value = 180
+      src.connect(filter)
+      filter.connect(gain)
+      gain.connect(ctx.destination)
+      src.start(startTime)
+
+      // Sharp crack
+      const crack = ctx.createOscillator()
+      const crackGain = ctx.createGain()
+      crack.type = 'square'
+      crack.frequency.setValueAtTime(120, startTime)
+      crack.frequency.exponentialRampToValueAtTime(40, startTime + 0.12)
+      crackGain.gain.setValueAtTime(0.6, startTime)
+      crackGain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15)
+      crack.connect(crackGain)
+      crackGain.connect(ctx.destination)
+      crack.start(startTime)
+      crack.stop(startTime + 0.15)
+    }
+
+    // 3 hammer strikes: BANG … BANG … BANG — SOLD!
+    strike(ctx.currentTime)
+    strike(ctx.currentTime + 1.2)
+    strike(ctx.currentTime + 2.2)
+  } catch (_) {}
+}
+
+/* ── Confetti particle ── */
+function Confetti({ color, x, delay }) {
+  const yEnd = 120 + Math.random() * 60
+  const xDrift = (Math.random() - 0.5) * 40
+  const size = Math.random() * 10 + 6
+  const isRect = Math.random() > 0.5
   return (
     <motion.div
-      className="absolute rounded-full pointer-events-none"
-      style={{ width: size, height: size, background: color, top: '50%', left: '50%' }}
-      initial={{ x: 0, y: 0, opacity: 1 }}
-      animate={{ x, y, opacity: 0 }}
-      transition={{ duration: 1.2, ease: 'easeOut' }}
+      className="absolute pointer-events-none"
+      style={{
+        width: isRect ? size : size * 0.6,
+        height: isRect ? size * 0.4 : size,
+        background: color,
+        borderRadius: isRect ? 2 : '50%',
+        top: '-5%',
+        left: `${x}%`,
+      }}
+      initial={{ y: 0, x: 0, rotate: 0, opacity: 1 }}
+      animate={{ y: `${yEnd}vh`, x: xDrift, rotate: 720, opacity: 0 }}
+      transition={{ duration: 2.5 + Math.random() * 2, delay, ease: 'easeIn' }}
     />
   )
 }
 
+/* ── Burst particle ── */
+function Particle({ color }) {
+  const x = (Math.random() - 0.5) * 700
+  const y = (Math.random() - 0.5) * 700
+  const size = Math.random() * 10 + 5
+  return (
+    <motion.div
+      className="absolute rounded-full pointer-events-none"
+      style={{ width: size, height: size, background: color, top: '50%', left: '50%' }}
+      initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+      animate={{ x, y, opacity: 0, scale: 0.3 }}
+      transition={{ duration: 1.4, ease: 'easeOut' }}
+    />
+  )
+}
+
+/* ── Auction hammer SVG ── */
+function HammerIcon({ style, className }) {
+  return (
+    <svg viewBox="0 0 100 100" className={className} style={style} fill="none">
+      <rect x="10" y="30" width="48" height="22" rx="5" fill="#C8A040" stroke="#FFD700" strokeWidth="2" />
+      <rect x="48" y="36" width="42" height="10" rx="4" fill="#8B6914" stroke="#C8A040" strokeWidth="1.5" />
+      <rect x="10" y="34" width="48" height="7" rx="3" fill="#FFD700" opacity="0.3" />
+    </svg>
+  )
+}
+
+/* ── Firework burst ── */
+function Firework({ x, y, color, delay }) {
+  return (
+    <div className="absolute pointer-events-none" style={{ left: `${x}%`, top: `${y}%` }}>
+      {[...Array(12)].map((_, i) => {
+        const angle = (i / 12) * 360
+        const dist = 40 + Math.random() * 30
+        const rad = (angle * Math.PI) / 180
+        return (
+          <motion.div
+            key={i}
+            className="absolute rounded-full"
+            style={{ width: 5, height: 5, background: color, left: 0, top: 0 }}
+            initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+            animate={{
+              x: Math.cos(rad) * dist,
+              y: Math.sin(rad) * dist,
+              opacity: 0,
+              scale: 0,
+            }}
+            transition={{ duration: 0.9, delay, ease: 'easeOut' }}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+/* ════════════════════════════════════════
+   SOLD OVERLAY
+════════════════════════════════════════ */
 export function SoldOverlay({ player, team, onDone }) {
   const teamColor = team?.color || '#FFD700'
+  const confettiColors = [teamColor, '#FFD700', '#FF6B35', '#00D4FF', '#FF3366', '#A855F7', '#22C55E']
+
+  // Hammer sound on mount
+  useEffect(() => { playHammerSound() }, [])
+
+  const fireworks = [
+    { x: 15, y: 15, color: '#FFD700', delay: 0.1 },
+    { x: 85, y: 10, color: teamColor, delay: 0.4 },
+    { x: 10, y: 70, color: '#FF6B35', delay: 0.7 },
+    { x: 80, y: 75, color: '#00D4FF', delay: 1.0 },
+    { x: 50, y: 8,  color: '#FF3366', delay: 1.3 },
+    { x: 25, y: 40, color: '#A855F7', delay: 1.6 },
+    { x: 72, y: 45, color: '#FFD700', delay: 1.9 },
+  ]
+
+  const hammers = [
+    { left: '5%',  top: '10%', size: 100, rotate: -30, delay: 0.2 },
+    { left: '80%', top: '5%',  size: 80,  rotate: 40,  delay: 0.6 },
+    { left: '3%',  top: '65%', size: 90,  rotate: -20, delay: 1.0 },
+    { left: '82%', top: '60%', size: 85,  rotate: 50,  delay: 1.4 },
+    { left: '45%', top: '3%',  size: 70,  rotate: 10,  delay: 0.9 },
+  ]
 
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center"
+        className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)' }}
+        style={{
+          background: `radial-gradient(ellipse at center, ${teamColor}22 0%, rgba(0,0,0,0.92) 70%)`,
+          backdropFilter: 'blur(6px)',
+        }}
         onClick={onDone}
       >
-        {/* Particle burst */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-          {[...Array(40)].map((_, i) => (
-            <Particle key={i} color={i % 2 === 0 ? teamColor : '#FFD700'} />
+        {/* Confetti rain */}
+        {[...Array(60)].map((_, i) => (
+          <Confetti
+            key={i}
+            color={confettiColors[i % confettiColors.length]}
+            x={Math.random() * 100}
+            delay={Math.random() * 1.5}
+          />
+        ))}
+
+        {/* Fireworks */}
+        {fireworks.map((fw, i) => (
+          <Firework key={i} {...fw} />
+        ))}
+
+        {/* Burst particles */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          {[...Array(60)].map((_, i) => (
+            <Particle key={i} color={i % 3 === 0 ? teamColor : i % 3 === 1 ? '#FFD700' : '#fff'} />
           ))}
         </div>
 
-        {/* Card zoom-in */}
+        {/* Hammer icons around screen */}
+        {hammers.map((h, i) => (
+          <motion.div
+            key={i}
+            className="absolute pointer-events-none"
+            style={{ left: h.left, top: h.top, width: h.size, rotate: h.rotate }}
+            initial={{ opacity: 0, scale: 0, rotate: h.rotate - 60 }}
+            animate={{ opacity: [0, 1, 1, 0], scale: [0, 1.3, 1, 0.8], rotate: [h.rotate - 60, h.rotate + 20, h.rotate] }}
+            transition={{ duration: 1.2, delay: h.delay, times: [0, 0.3, 0.6, 1] }}
+          >
+            <HammerIcon className="w-full h-full" />
+          </motion.div>
+        ))}
+
+        {/* Pulsing ring behind card */}
         <motion.div
-          className="flex flex-col items-center gap-6 z-10"
+          className="absolute rounded-full pointer-events-none"
+          style={{ width: 420, height: 420, border: `3px solid ${teamColor}`, opacity: 0.3 }}
+          animate={{ scale: [1, 1.6, 1], opacity: [0.3, 0, 0.3] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+        />
+
+        {/* Main content */}
+        <motion.div
+          className="flex flex-col items-center gap-5 z-10"
           initial={{ scale: 0.2, rotate: -15 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 18 }}
         >
+          {/* SOLD banner */}
           <motion.div
-            className="font-orbitron text-5xl font-black tracking-widest"
-            style={{ color: teamColor, textShadow: `0 0 40px ${teamColor}` }}
-            initial={{ y: -40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
+            className="font-orbitron text-7xl font-black tracking-widest relative"
+            style={{ color: teamColor, textShadow: `0 0 60px ${teamColor}, 0 0 120px ${teamColor}88` }}
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{ repeat: Infinity, duration: 1.2 }}
           >
             SOLD!
+            <motion.span
+              className="absolute -right-12 -top-4 text-4xl"
+              animate={{ rotate: [-20, 20, -20] }}
+              transition={{ repeat: Infinity, duration: 0.6 }}
+            >
+              🔨
+            </motion.span>
           </motion.div>
 
-          <PlayerCard player={player} teamColor={teamColor} teamName={team?.team_name} showStatus />
+          {/* Larger player card — scale wrapper */}
+          <motion.div
+            style={{ transform: 'scale(1.35)', transformOrigin: 'center top', marginBottom: '5rem' }}
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <PlayerCard player={player} teamColor={teamColor} teamName={team?.team_name} showStatus />
+          </motion.div>
 
           <motion.div
             className="text-center"
@@ -61,10 +252,11 @@ export function SoldOverlay({ player, team, onDone }) {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <p className="font-rajdhani text-2xl font-bold text-white">
+            <p className="font-rajdhani text-3xl font-bold text-white">
               Going to <span style={{ color: teamColor }}>{team?.team_name}</span>
             </p>
-            <p className="font-orbitron text-3xl font-black text-yellow-400 mt-1">
+            <p className="font-orbitron text-4xl font-black text-yellow-400 mt-1"
+              style={{ textShadow: '0 0 30px #FFD70088' }}>
               ₹{player?.final_bid?.toLocaleString('en-IN')}
             </p>
             <p className="text-gray-400 text-sm mt-2">Led by {team?.marquee_player_name}</p>
@@ -84,6 +276,9 @@ export function SoldOverlay({ player, team, onDone }) {
   )
 }
 
+/* ════════════════════════════════════════
+   UNSOLD OVERLAY
+════════════════════════════════════════ */
 export function UnsoldOverlay({ player, onDone }) {
   return (
     <AnimatePresence>
@@ -108,8 +303,8 @@ export function UnsoldOverlay({ player, onDone }) {
             UNSOLD
           </motion.div>
 
-          {/* Greyed-out card */}
           <motion.div
+            style={{ transform: 'scale(1.35)', transformOrigin: 'center top', marginBottom: '5rem' }}
             initial={{ filter: 'grayscale(0)' }}
             animate={{ filter: 'grayscale(1)', opacity: 0.5 }}
             transition={{ duration: 0.8 }}
@@ -140,6 +335,71 @@ export function UnsoldOverlay({ player, onDone }) {
   )
 }
 
+/* ════════════════════════════════════════
+   PLAYER UP OVERLAY
+════════════════════════════════════════ */
+
+const BIDDER_NAMES = [
+  'Team Alpha', 'Red Lions', 'Blue Hawks', 'Gold Eagles',
+  'Storm FC', 'Iron Wolves', 'Night Owls', 'Fire Squad',
+]
+
+function BidderBubble({ name, amount, x, y, delay }) {
+  return (
+    <motion.div
+      className="absolute pointer-events-none flex items-center gap-2 px-3 py-2 rounded-xl"
+      style={{
+        left: `${x}%`, top: `${y}%`,
+        background: 'rgba(255,255,255,0.08)',
+        border: '1px solid rgba(255,255,255,0.15)',
+        backdropFilter: 'blur(8px)',
+      }}
+      initial={{ opacity: 0, y: 20, scale: 0.8 }}
+      animate={{ opacity: [0, 1, 1, 0], y: [20, 0, -5, -20], scale: [0.8, 1, 1, 0.9] }}
+      transition={{ duration: 2.5, delay, repeat: Infinity, repeatDelay: Math.random() * 2 + 1 }}
+    >
+      <span className="text-lg">💰</span>
+      <div>
+        <p className="font-rajdhani text-xs font-bold text-white leading-none">{name}</p>
+        <p className="font-orbitron text-xs text-yellow-400 font-black">₹{amount}K</p>
+      </div>
+    </motion.div>
+  )
+}
+
+function BidWar() {
+  const bidders = [
+    { x: 2,  y: 15, delay: 0.3,  amount: 55 },
+    { x: 75, y: 10, delay: 0.9,  amount: 65 },
+    { x: 2,  y: 50, delay: 1.6,  amount: 70 },
+    { x: 74, y: 48, delay: 2.2,  amount: 80 },
+    { x: 5,  y: 78, delay: 0.6,  amount: 90 },
+    { x: 72, y: 78, delay: 1.3,  amount: 100 },
+  ]
+  return (
+    <>
+      {bidders.map((b, i) => (
+        <BidderBubble
+          key={i}
+          name={BIDDER_NAMES[i % BIDDER_NAMES.length]}
+          amount={b.amount}
+          x={b.x} y={b.y}
+          delay={b.delay}
+        />
+      ))}
+      {/* Escalating bid text center-bottom */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 font-orbitron text-xs tracking-widest uppercase"
+        style={{ color: '#FFD700' }}
+        animate={{ opacity: [0.4, 1, 0.4] }}
+        transition={{ repeat: Infinity, duration: 1.2 }}
+      >
+        ⚡ Bidding War In Progress ⚡
+      </motion.div>
+    </>
+  )
+}
+
 export function PlayerUpOverlay({ player, onDone }) {
   const tierColors = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' }
   const color = tierColors[player?.tier] || '#FFD700'
@@ -147,7 +407,7 @@ export function PlayerUpOverlay({ player, onDone }) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center"
+        className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -156,23 +416,42 @@ export function PlayerUpOverlay({ player, onDone }) {
       >
         {/* Spotlight beams */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(6)].map((_, i) => (
+          {[...Array(8)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute bottom-0 left-1/2 origin-bottom"
               style={{
-                width: '4px',
-                height: '80vh',
-                background: `linear-gradient(to top, ${color}44, transparent)`,
-                transform: `translateX(-50%) rotate(${(i - 2.5) * 15}deg)`,
+                width: '3px',
+                height: '90vh',
+                background: `linear-gradient(to top, ${color}55, transparent)`,
+                transform: `translateX(-50%) rotate(${(i - 3.5) * 14}deg)`,
               }}
               initial={{ scaleY: 0, opacity: 0 }}
-              animate={{ scaleY: 1, opacity: 1 }}
-              transition={{ delay: i * 0.08, duration: 0.6 }}
+              animate={{ scaleY: 1, opacity: [0, 0.8, 0.4] }}
+              transition={{ delay: i * 0.07, duration: 0.8 }}
             />
           ))}
         </div>
 
+        {/* Bid war bubbles + label */}
+        <BidWar />
+
+        {/* Crowd energy pulses */}
+        {[...Array(4)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              width: 200 + i * 120,
+              height: 200 + i * 120,
+              border: `1px solid ${color}44`,
+            }}
+            animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
+            transition={{ repeat: Infinity, duration: 2.5, delay: i * 0.5 }}
+          />
+        ))}
+
+        {/* Main content */}
         <motion.div
           className="flex flex-col items-center gap-4 z-10"
           initial={{ y: 80, opacity: 0 }}
@@ -188,7 +467,10 @@ export function PlayerUpOverlay({ player, onDone }) {
             Now Up For Auction
           </motion.p>
 
-          <PlayerCard player={player} teamColor={color} />
+          {/* Larger player card */}
+          <motion.div style={{ transform: 'scale(1.4)', transformOrigin: 'center top', marginBottom: '6rem' }}>
+            <PlayerCard player={player} teamColor={color} />
+          </motion.div>
 
           <motion.p
             className="text-gray-500 text-sm mt-2"
