@@ -2,49 +2,100 @@ import { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import PlayerCard from './PlayerCard'
 
-/* ── Hammer sound via Web Audio API ── */
-function playHammerSound() {
+/* ── Audio: hammer strikes (7s) then crowd cheer (13s) ── */
+function playSoldAudio() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)()
 
-    function strike(startTime) {
-      // Impact thud
-      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.3, ctx.sampleRate)
+    /* Heavy hammer strike */
+    function strike(t) {
+      // Deep thud
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate)
       const data = buf.getChannelData(0)
       for (let i = 0; i < data.length; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.04))
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.055))
       }
       const src = ctx.createBufferSource()
       src.buffer = buf
       const gain = ctx.createGain()
-      gain.gain.setValueAtTime(1.2, startTime)
-      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.28)
+      gain.gain.setValueAtTime(1.8, t)
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45)
       const filter = ctx.createBiquadFilter()
       filter.type = 'lowpass'
-      filter.frequency.value = 180
-      src.connect(filter)
-      filter.connect(gain)
-      gain.connect(ctx.destination)
-      src.start(startTime)
+      filter.frequency.value = 160
+      src.connect(filter); filter.connect(gain); gain.connect(ctx.destination)
+      src.start(t)
 
-      // Sharp crack
+      // Crack
       const crack = ctx.createOscillator()
-      const crackGain = ctx.createGain()
+      const cg = ctx.createGain()
       crack.type = 'square'
-      crack.frequency.setValueAtTime(120, startTime)
-      crack.frequency.exponentialRampToValueAtTime(40, startTime + 0.12)
-      crackGain.gain.setValueAtTime(0.6, startTime)
-      crackGain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15)
-      crack.connect(crackGain)
-      crackGain.connect(ctx.destination)
-      crack.start(startTime)
-      crack.stop(startTime + 0.15)
+      crack.frequency.setValueAtTime(140, t)
+      crack.frequency.exponentialRampToValueAtTime(35, t + 0.18)
+      cg.gain.setValueAtTime(0.9, t)
+      cg.gain.exponentialRampToValueAtTime(0.001, t + 0.2)
+      crack.connect(cg); cg.connect(ctx.destination)
+      crack.start(t); crack.stop(t + 0.2)
     }
 
-    // 3 hammer strikes: BANG … BANG … BANG — SOLD!
-    strike(ctx.currentTime)
-    strike(ctx.currentTime + 1.2)
-    strike(ctx.currentTime + 2.2)
+    // 5 strikes spread over 7 seconds: 0, 1.4, 2.8, 4.5, 6.2
+    const now = ctx.currentTime
+    ;[0, 1.4, 2.8, 4.5, 6.2].forEach(offset => strike(now + offset))
+
+    /* Crowd cheer synthesised: starts at 7s, lasts ~13s */
+    function startCheer(startT) {
+      const duration = 13
+
+      // Crowd noise base — filtered white noise swell
+      const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate)
+      const nd = noiseBuf.getChannelData(0)
+      for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1
+      const noise = ctx.createBufferSource()
+      noise.buffer = noiseBuf
+
+      const bandpass = ctx.createBiquadFilter()
+      bandpass.type = 'bandpass'
+      bandpass.frequency.value = 1200
+      bandpass.Q.value = 0.6
+
+      const cheerGain = ctx.createGain()
+      cheerGain.gain.setValueAtTime(0, startT)
+      cheerGain.gain.linearRampToValueAtTime(0.55, startT + 1.5)   // swell in
+      cheerGain.gain.setValueAtTime(0.55, startT + 8)
+      cheerGain.gain.linearRampToValueAtTime(0, startT + duration)  // fade out
+
+      noise.connect(bandpass); bandpass.connect(cheerGain); cheerGain.connect(ctx.destination)
+      noise.start(startT); noise.stop(startT + duration)
+
+      // Rhythmic chant pulses on top
+      for (let p = 0; p < 8; p++) {
+        const pt = startT + 1 + p * 1.4
+        const pulse = ctx.createOscillator()
+        const pg = ctx.createGain()
+        pulse.type = 'sine'
+        pulse.frequency.setValueAtTime(320 + Math.random() * 80, pt)
+        pulse.frequency.linearRampToValueAtTime(260, pt + 0.4)
+        pg.gain.setValueAtTime(0.18, pt)
+        pg.gain.exponentialRampToValueAtTime(0.001, pt + 0.5)
+        pulse.connect(pg); pg.connect(ctx.destination)
+        pulse.start(pt); pulse.stop(pt + 0.5)
+      }
+
+      // High-pitched "yay" shimmer
+      for (let s = 0; s < 12; s++) {
+        const st = startT + Math.random() * 10
+        const shimmer = ctx.createOscillator()
+        const sg = ctx.createGain()
+        shimmer.type = 'sine'
+        shimmer.frequency.value = 800 + Math.random() * 600
+        sg.gain.setValueAtTime(0.06, st)
+        sg.gain.exponentialRampToValueAtTime(0.001, st + 0.6)
+        shimmer.connect(sg); sg.connect(ctx.destination)
+        shimmer.start(st); shimmer.stop(st + 0.6)
+      }
+    }
+
+    startCheer(now + 7)
   } catch (_) {}
 }
 
@@ -67,7 +118,7 @@ function Confetti({ color, x, delay }) {
       }}
       initial={{ y: 0, x: 0, rotate: 0, opacity: 1 }}
       animate={{ y: `${yEnd}vh`, x: xDrift, rotate: 720, opacity: 0 }}
-      transition={{ duration: 2.5 + Math.random() * 2, delay, ease: 'easeIn' }}
+      transition={{ duration: 2.5 + Math.random() * 2, delay, ease: 'easeIn', repeat: Infinity, repeatDelay: Math.random() * 3 }}
     />
   )
 }
@@ -113,13 +164,8 @@ function Firework({ x, y, color, delay }) {
             className="absolute rounded-full"
             style={{ width: 5, height: 5, background: color, left: 0, top: 0 }}
             initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
-            animate={{
-              x: Math.cos(rad) * dist,
-              y: Math.sin(rad) * dist,
-              opacity: 0,
-              scale: 0,
-            }}
-            transition={{ duration: 0.9, delay, ease: 'easeOut' }}
+            animate={{ x: Math.cos(rad) * dist, y: Math.sin(rad) * dist, opacity: 0, scale: 0 }}
+            transition={{ duration: 0.9, delay, ease: 'easeOut', repeat: Infinity, repeatDelay: 2.5 + Math.random() * 2 }}
           />
         )
       })}
@@ -134,8 +180,11 @@ export function SoldOverlay({ player, team, onDone }) {
   const teamColor = team?.color || '#FFD700'
   const confettiColors = [teamColor, '#FFD700', '#FF6B35', '#00D4FF', '#FF3366', '#A855F7', '#22C55E']
 
-  // Hammer sound on mount
-  useEffect(() => { playHammerSound() }, [])
+  useEffect(() => {
+    playSoldAudio()
+    const timer = setTimeout(onDone, 20000)
+    return () => clearTimeout(timer)
+  }, [])
 
   const fireworks = [
     { x: 15, y: 15, color: '#FFD700', delay: 0.1 },
@@ -268,7 +317,7 @@ export function SoldOverlay({ player, team, onDone }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5 }}
           >
-            Click anywhere to continue
+            Click anywhere to continue · auto-closes in 20s
           </motion.p>
         </motion.div>
       </motion.div>
