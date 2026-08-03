@@ -2,10 +2,20 @@ import { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import PlayerCard from './PlayerCard'
 
+/* ── Shared AudioContext — created on first user gesture ── */
+let _audioCtx = null
+function getAudioCtx() {
+  // Reuse the one unlocked by App.jsx if available
+  if (window._sharedAudioCtx) _audioCtx = window._sharedAudioCtx
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+  if (_audioCtx.state === 'suspended') _audioCtx.resume()
+  return _audioCtx
+}
+
 /* ── Audio: hammer strikes (7s) then crowd cheer (13s) ── */
 function playSoldAudio() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)()
+    const ctx = getAudioCtx()
 
     /* Heavy hammer strike */
     function strike(t) {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Login from './pages/Login'
@@ -13,6 +14,23 @@ function PrivateRoute({ children, requiredRole }) {
 }
 
 export default function App() {
+  // Unlock AudioContext on first user interaction so sounds work without delay
+  useEffect(() => {
+    function unlock() {
+      if (!window._audioCtxUnlocked) {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)()
+        ctx.resume().then(() => { window._audioCtxUnlocked = true })
+        // Store so Overlays can reuse it
+        window._sharedAudioCtx = ctx
+      }
+    }
+    window.addEventListener('click', unlock, { once: true })
+    window.addEventListener('keydown', unlock, { once: true })
+    return () => {
+      window.removeEventListener('click', unlock)
+      window.removeEventListener('keydown', unlock)
+    }
+  }, [])
   return (
     <BrowserRouter>
       <Toaster
