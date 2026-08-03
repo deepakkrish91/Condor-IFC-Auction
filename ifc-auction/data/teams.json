@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "team_name": "Força Iris",
+    "marquee_player_name": "Harikumar",
+    "apartment": "10E",
+    "color": "#C41E3A",
+    "secondary_color": "#FFD700"
+  },
+  {
+    "id": 2,
+    "team_name": "Trojans FC",
+    "marquee_player_name": "Ali Mohammed",
+    "apartment": "6C",
+    "color": "#1A3C6E",
+    "secondary_color": "#C0C0C0"
+  },
+  {
+    "id": 3,
+    "team_name": "Sparta FC",
+    "marquee_player_name": "Nikhil GS",
+    "apartment": "3D",
+    "color": "#2D6A2D",
+    "secondary_color": "#FFD700"
+  },
+  {
+    "id": 4,
+    "team_name": "Irisponsibles FC",
+    "marquee_player_name": "Vishnu Gopakumar",
+    "apartment": "6I",
+    "color": "#6B1A6B",
+    "secondary_color": "#FF8C00"
+  }
+]
