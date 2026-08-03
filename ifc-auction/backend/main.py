@@ -39,6 +39,11 @@ def on_startup():
     seed()
 
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
 @app.post("/auth/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     from fastapi import HTTPException, status
