@@ -5,6 +5,7 @@ import { SoldOverlay, UnsoldOverlay, PlayerUpOverlay } from '../components/Overl
 import TeamBudgetBar from '../components/TeamBudgetBar'
 import PlayerCard from '../components/PlayerCard'
 import { useAuctionSocket } from '../hooks/useAuctionSocket'
+import condorLogo from '../assets/condor-iris-logo.png'
 
 const MAX_BUDGET = 1_000_000
 
@@ -37,7 +38,17 @@ export default function TeamDashboard() {
   const activeTeam = selectedTeam ? teams.find(t => t.id === selectedTeam.id) || selectedTeam : null
 
   return (
-    <div className="min-h-screen p-4" style={{ background: '#080C1A' }}>
+    <div className="min-h-screen p-4 iris-bg relative overflow-hidden">
+      {/* Decorative iris orbs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="iris-orb absolute -top-24 -right-24 w-96 h-96 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(155,127,232,0.15) 0%, transparent 70%)' }} />
+        <div className="iris-orb absolute bottom-1/4 -left-20 w-80 h-80 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(107,140,255,0.13) 0%, transparent 70%)', animationDelay: '4s' }} />
+        <div className="iris-orb absolute top-2/3 right-1/4 w-60 h-60 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(43,63,191,0.12) 0%, transparent 70%)', animationDelay: '2s' }} />
+      </div>
+
       <AnimatePresence>
         {overlay?.type === 'player_up' && (
           <PlayerUpOverlay player={overlay.player} onDone={() => setOverlay(null)} />
@@ -51,11 +62,17 @@ export default function TeamDashboard() {
       </AnimatePresence>
 
       {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="font-orbitron text-2xl font-black text-white tracking-widest">
-          CONDOR IFC <span className="text-yellow-400">TEAMS</span>
-        </h1>
-        <p className="font-rajdhani text-gray-400 uppercase tracking-widest text-sm">Live Auction Status</p>
+      <div className="relative flex items-center justify-center mb-8">
+        {/* Logo top-left */}
+        <div className="absolute left-0 top-0 flex items-center gap-3">
+          <img src={condorLogo} alt="Condor IRIS" className="h-14 object-contain logo-knockout" />
+        </div>
+        <div className="text-center">
+          <h1 className="font-orbitron text-2xl font-black text-white tracking-widest">
+            CONDOR IFC <span style={{ color: '#8BA7FF' }}>TEAMS</span>
+          </h1>
+          <p className="font-rajdhani uppercase tracking-widest text-sm" style={{ color: '#7B8FC8' }}>Live Auction Status</p>
+        </div>
       </div>
 
       {/* Team selector tabs */}
@@ -85,8 +102,8 @@ export default function TeamDashboard() {
             key={activeTeam.id}
             className="rounded-2xl p-6 border"
             style={{
-              background: `linear-gradient(135deg, ${activeTeam.color}33 0%, #080C1A 100%)`,
-              borderColor: `${activeTeam.color}55`,
+              background: `linear-gradient(135deg, ${activeTeam.color}28 0%, rgba(107,140,255,0.10) 50%, rgba(13,16,53,0.95) 100%)`,
+              borderColor: `${activeTeam.color}44`,
             }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -136,8 +153,8 @@ export default function TeamDashboard() {
           </motion.div>
 
           {/* Roster */}
-          <div className="rounded-2xl border border-white/10 p-5"
-            style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="rounded-2xl border p-5"
+            style={{ background: 'rgba(107,140,255,0.07)', borderColor: 'rgba(107,140,255,0.2)' }}>
             <h3 className="font-rajdhani text-sm uppercase tracking-widest text-gray-400 mb-4">
               Squad ({activeTeam.players.length} / 6 signed)
             </h3>
@@ -199,8 +216,8 @@ export default function TeamDashboard() {
           </div>
 
           {/* All teams overview */}
-          <div className="rounded-2xl border border-white/10 p-5"
-            style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="rounded-2xl border p-5"
+            style={{ background: 'rgba(107,140,255,0.07)', borderColor: 'rgba(107,140,255,0.2)' }}>
             <h3 className="font-rajdhani text-sm uppercase tracking-widest text-gray-400 mb-4">
               All Teams Overview
             </h3>

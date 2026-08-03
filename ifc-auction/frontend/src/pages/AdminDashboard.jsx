@@ -6,6 +6,7 @@ import PlayerCard from '../components/PlayerCard'
 import TeamBudgetBar from '../components/TeamBudgetBar'
 import { SoldOverlay, UnsoldOverlay, PlayerUpOverlay } from '../components/Overlays'
 import { useAuctionSocket } from '../hooks/useAuctionSocket'
+import condorLogo from '../assets/condor-iris-logo.png'
 
 const TIER_BASE = { 1: 50000, 2: 30000, 3: 25000 }
 const TIER_COLOR = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' }
@@ -139,7 +140,17 @@ export default function AdminDashboard() {
   }[state.phase] || { text: state.phase, color: '#fff' }
 
   return (
-    <div className="min-h-screen p-4" style={{ background: '#080C1A' }}>
+    <div className="min-h-screen p-4 iris-bg relative overflow-hidden">
+      {/* Decorative iris orbs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="iris-orb absolute -top-32 -left-32 w-96 h-96 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(107,140,255,0.15) 0%, transparent 70%)' }} />
+        <div className="iris-orb absolute top-1/3 -right-24 w-80 h-80 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(155,127,232,0.12) 0%, transparent 70%)', animationDelay: '3s' }} />
+        <div className="iris-orb absolute bottom-0 left-1/4 w-64 h-64 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(43,63,191,0.14) 0%, transparent 70%)', animationDelay: '5s' }} />
+      </div>
+
       {/* Overlays */}
       <AnimatePresence>
         {overlay?.type === 'player_up' && (
@@ -163,7 +174,7 @@ export default function AdminDashboard() {
           >
             <motion.div
               className="rounded-2xl border border-red-500/40 p-8 max-w-sm w-full mx-4 text-center"
-              style={{ background: '#0f0a1a' }}
+              style={{ background: 'linear-gradient(135deg, #0D1035, #0A0C28)' }}
               initial={{ scale: 0.8 }} animate={{ scale: 1 }}
             >
               <div className="text-4xl mb-4">⚠️</div>
@@ -197,13 +208,21 @@ export default function AdminDashboard() {
       </AnimatePresence>
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 relative">
+        {/* Left: title */}
         <div>
           <h1 className="font-orbitron text-2xl font-black text-white tracking-widest">
-            CONDOR IFC <span className="text-yellow-400">AUCTION</span>
+            CONDOR IFC <span style={{ color: '#8BA7FF' }}>AUCTION</span>
           </h1>
-          <p className="font-rajdhani text-sm text-gray-400 uppercase tracking-widest">Admin Control Panel</p>
+          <p className="font-rajdhani text-sm uppercase tracking-widest" style={{ color: '#7B8FC8' }}>Admin Control Panel</p>
         </div>
+
+        {/* Center: Logo */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center">
+          <img src={condorLogo} alt="Condor IRIS" className="h-16 object-contain logo-knockout" />
+        </div>
+
+        {/* Right: phase + reset */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10"
             style={{ background: `${phaseLabel.color}22` }}>
@@ -229,8 +248,8 @@ export default function AdminDashboard() {
         <div className="col-span-12 lg:col-span-4 space-y-4">
 
           {/* Current Player */}
-          <div className="rounded-2xl border border-white/10 p-4"
-            style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="rounded-2xl border p-4"
+            style={{ background: 'rgba(107,140,255,0.07)', borderColor: 'rgba(107,140,255,0.2)' }}>
             <h2 className="font-rajdhani text-sm uppercase tracking-widest text-gray-400 mb-3">
               Current Player
             </h2>
@@ -353,8 +372,8 @@ export default function AdminDashboard() {
           )}
 
           {/* Team Budgets */}
-          <div className="rounded-2xl border border-white/10 p-4"
-            style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="rounded-2xl border p-4"
+            style={{ background: 'rgba(107,140,255,0.07)', borderColor: 'rgba(107,140,255,0.2)' }}>
             <h2 className="font-rajdhani text-sm uppercase tracking-widest text-gray-400 mb-3">
               Team Budgets
             </h2>
@@ -366,8 +385,8 @@ export default function AdminDashboard() {
 
         {/* Right: Player List */}
         <div className="col-span-12 lg:col-span-8">
-          <div className="rounded-2xl border border-white/10 p-4"
-            style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="rounded-2xl border p-4"
+            style={{ background: 'rgba(107,140,255,0.07)', borderColor: 'rgba(107,140,255,0.2)' }}>
 
             {/* Filters */}
             <div className="flex flex-wrap gap-2 mb-4 items-center justify-between">
