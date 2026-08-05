@@ -52,9 +52,9 @@ function playSoldAudio() {
     const now = ctx.currentTime
     ;[0, 1.4, 2.8, 4.5, 6.2].forEach(offset => strike(now + offset))
 
-    /* Crowd cheer synthesised: starts at 7s, lasts ~13s */
+    /* Crowd cheer synthesised: starts at 7s, lasts 5s (ends at 12s) */
     function startCheer(startT) {
-      const duration = 13
+      const duration = 5
 
       // Crowd noise base — filtered white noise swell
       const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate)
@@ -70,16 +70,16 @@ function playSoldAudio() {
 
       const cheerGain = ctx.createGain()
       cheerGain.gain.setValueAtTime(0, startT)
-      cheerGain.gain.linearRampToValueAtTime(0.55, startT + 1.5)   // swell in
-      cheerGain.gain.setValueAtTime(0.55, startT + 8)
+      cheerGain.gain.linearRampToValueAtTime(0.55, startT + 1.0)   // swell in
+      cheerGain.gain.setValueAtTime(0.55, startT + 3.5)
       cheerGain.gain.linearRampToValueAtTime(0, startT + duration)  // fade out
 
       noise.connect(bandpass); bandpass.connect(cheerGain); cheerGain.connect(ctx.destination)
       noise.start(startT); noise.stop(startT + duration)
 
       // Rhythmic chant pulses on top
-      for (let p = 0; p < 8; p++) {
-        const pt = startT + 1 + p * 1.4
+      for (let p = 0; p < 3; p++) {
+        const pt = startT + 0.5 + p * 1.2
         const pulse = ctx.createOscillator()
         const pg = ctx.createGain()
         pulse.type = 'sine'
@@ -92,8 +92,8 @@ function playSoldAudio() {
       }
 
       // High-pitched "yay" shimmer
-      for (let s = 0; s < 12; s++) {
-        const st = startT + Math.random() * 10
+      for (let s = 0; s < 5; s++) {
+        const st = startT + Math.random() * 3.5
         const shimmer = ctx.createOscillator()
         const sg = ctx.createGain()
         shimmer.type = 'sine'
@@ -192,7 +192,7 @@ export function SoldOverlay({ player, team, onDone }) {
 
   useEffect(() => {
     playSoldAudio()
-    const timer = setTimeout(onDone, 20000)
+    const timer = setTimeout(onDone, 12000)
     return () => clearTimeout(timer)
   }, [])
 
@@ -327,7 +327,7 @@ export function SoldOverlay({ player, team, onDone }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5 }}
           >
-            Click anywhere to continue · auto-closes in 20s
+            Click anywhere to continue · auto-closes in 12s
           </motion.p>
         </motion.div>
       </motion.div>

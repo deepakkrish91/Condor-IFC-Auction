@@ -203,8 +203,8 @@ export default function TeamDashboard() {
               {[...Array(Math.max(0, 6 - activeTeam.players.length))].map((_, i) => (
                 <div
                   key={`empty-${i}`}
-                  className="w-64 h-80 rounded-2xl border-2 border-dashed flex items-center justify-center"
-                  style={{ borderColor: `${activeTeam.color}33` }}
+                  className="rounded-3xl border-2 border-dashed flex items-center justify-center"
+                  style={{ width: 260, height: 420, borderColor: `${activeTeam.color}33` }}
                 >
                   <div className="text-center text-gray-700">
                     <p className="text-3xl mb-1">+</p>

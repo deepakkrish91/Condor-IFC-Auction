@@ -3,6 +3,7 @@
     "id": 1,
     "team_name": "Força Iris",
     "marquee_player_name": "Harikumar",
+    "image": "forca_iris.png",
     "apartment": "10E",
     "color": "#C41E3A",
     "secondary_color": "#FFD700"
@@ -11,6 +12,7 @@
     "id": 2,
     "team_name": "Iris Kootkar FC",
     "marquee_player_name": "Ali Mohammed",
+    "image": "iris_kootkar_fc.png",
     "apartment": "6C",
     "color": "#1A3C6E",
     "secondary_color": "#C0C0C0"
@@ -19,6 +21,7 @@
     "id": 3,
     "team_name": "Iris Spartans",
     "marquee_player_name": "Nikhil GS",
+    "image": "iris_spartans",
     "apartment": "3D",
     "color": "#2D6A2D",
     "secondary_color": "#FFD700"
@@ -27,6 +30,7 @@
     "id": 4,
     "team_name": "Irisponsibles FC",
     "marquee_player_name": "Vishnu Gopakumar",
+    "image": "irisponsibles_fc.png",
     "apartment": "6I",
     "color": "#6B1A6B",
     "secondary_color": "#FF8C00"
