@@ -14,18 +14,18 @@ function PrivateRoute({ children, requiredRole }) {
 }
 
 export default function App() {
-  // Unlock AudioContext on first user interaction so sounds work without delay
+  // Keep AudioContext alive — resume on every click since browsers suspend it aggressively
   useEffect(() => {
     function unlock() {
-      if (!window._audioCtxUnlocked) {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)()
-        ctx.resume().then(() => { window._audioCtxUnlocked = true })
-        // Store so Overlays can reuse it
-        window._sharedAudioCtx = ctx
+      if (!window._sharedAudioCtx) {
+        window._sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)()
+      }
+      if (window._sharedAudioCtx.state === 'suspended') {
+        window._sharedAudioCtx.resume()
       }
     }
-    window.addEventListener('click', unlock, { once: true })
-    window.addEventListener('keydown', unlock, { once: true })
+    window.addEventListener('click', unlock)
+    window.addEventListener('keydown', unlock)
     return () => {
       window.removeEventListener('click', unlock)
       window.removeEventListener('keydown', unlock)

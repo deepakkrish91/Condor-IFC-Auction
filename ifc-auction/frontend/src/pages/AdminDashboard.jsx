@@ -91,6 +91,10 @@ export default function AdminDashboard() {
       toast.error('Select a team and enter bid amount.')
       return
     }
+    // Resume AudioContext inside this click handler — must happen within the user gesture
+    if (window._sharedAudioCtx?.state === 'suspended') {
+      await window._sharedAudioCtx.resume()
+    }
     setLoading(true)
     try {
       const res = await api.post('/admin/auction/sell', {

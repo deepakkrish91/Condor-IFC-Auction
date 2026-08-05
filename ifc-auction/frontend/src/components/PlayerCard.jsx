@@ -1,3 +1,5 @@
+import condorLogo from '../assets/condor-iris-logo.png'
+
 const TIER_STARS = { 1: 5, 2: 4.2, 3: 3.8 }
 const TIER_LABEL = { 1: 'TIER 1', 2: 'TIER 2', 3: 'TIER 3' }
 const TIER_GLOW  = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' }
@@ -156,16 +158,11 @@ export default function PlayerCard({ player, teamColor, teamName, showStatus = f
 
           {/* Team badge + flag — right side */}
           <div className="absolute right-3 bottom-4 z-20 flex flex-col items-center gap-2">
-            <div
-              className="w-11 h-13 flex items-center justify-center rounded-b-2xl rounded-t-sm px-1 py-1.5 text-[9px] font-black text-center text-white leading-tight"
-              style={{
-                background: `linear-gradient(180deg, #1A3C6E 0%, ${color}cc 100%)`,
-                border: `1px solid ${color}66`,
-                minHeight: 48,
-              }}
-            >
-              {shortName}
-            </div>
+            <img
+              src={condorLogo}
+              alt="Condor IFC"
+              className="w-12 object-contain logo-knockout opacity-90"
+            />
             <div
               className="w-9 h-6 rounded flex items-center justify-center text-sm"
               style={{ background: 'rgba(0,0,0,0.5)', border: `1px solid ${color}44` }}
@@ -234,7 +231,6 @@ export default function PlayerCard({ player, teamColor, teamName, showStatus = f
           <StatRow label="Stamina"    value={player.stamina}    color={STAT_COLORS.stamina} />
           <StatRow label="Aggression" value={player.aggression} color={STAT_COLORS.aggression} />
         </div>
-
         {/* Divider */}
         <div className="mx-4 mt-1" style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
 

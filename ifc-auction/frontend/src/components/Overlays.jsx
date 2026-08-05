@@ -15,6 +15,8 @@ async function getAudioCtx() {
 async function playSoldAudio() {
   try {
     const ctx = await getAudioCtx()
+    // Force resume in case browser suspended between the last click and now
+    if (ctx.state === 'suspended') await ctx.resume()
 
     /* Heavy hammer strike */
     function strike(t) {
