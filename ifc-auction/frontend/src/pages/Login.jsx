@@ -3,6 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import api from '../api'
 import toast from 'react-hot-toast'
+import condorLogo from '../assets/condor-iris-logo.png'
+
+const PLAYERS = [
+  { src: '/messi.png',   name: 'Messi',   side: 'left',  x: '-8%',  width: 420 },
+  { src: '/ronaldo.png', name: 'Ronaldo', side: 'right', x: '-8%',  width: 380 },
+  { src: '/yamal.png',   name: 'Yamal',   side: 'right', x: '18%',  width: 320 },
+]
 
 export default function Login() {
   const [username, setUsername] = useState('')
@@ -34,30 +41,79 @@ export default function Login() {
   return (
     <div
       className="min-h-screen flex items-center justify-center relative overflow-hidden"
-      style={{ background: 'radial-gradient(ellipse at 50% 30%, #1a0a2e 0%, #080C1A 70%)' }}
+      style={{ background: 'radial-gradient(ellipse at 50% 40%, #0d1535 0%, #060912 100%)' }}
     >
-      {/* Background glow orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-10 blur-3xl"
+      {/* Pitch lines subtle background */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 80px),
+                            repeating-linear-gradient(0deg,  #fff 0px, #fff 1px, transparent 1px, transparent 80px)`,
+        }}
+      />
+
+      {/* Glow orbs */}
+      <div className="absolute top-0 left-1/3 w-[600px] h-[600px] rounded-full opacity-10 blur-[120px] pointer-events-none"
+        style={{ background: '#4B6FFF' }} />
+      <div className="absolute bottom-0 right-1/3 w-[500px] h-[500px] rounded-full opacity-10 blur-[100px] pointer-events-none"
         style={{ background: '#C41E3A' }} />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full opacity-10 blur-3xl"
-        style={{ background: '#1A3C6E' }} />
+
+      {/* ── Left player: Messi ── */}
+      <motion.div
+        className="absolute bottom-0 left-0 pointer-events-none select-none"
+        style={{ width: PLAYERS[0].width }}
+        initial={{ x: -120, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.9, ease: 'easeOut' }}
+      >
+        <img src={PLAYERS[0].src} alt={PLAYERS[0].name} className="w-full h-auto object-contain object-bottom"
+          style={{ filter: 'drop-shadow(-8px 0 40px rgba(75,111,255,0.4))' }} />
+        <div className="absolute bottom-0 left-0 right-0 h-32"
+          style={{ background: 'linear-gradient(to top, #060912 0%, transparent 100%)' }} />
+      </motion.div>
+
+      {/* ── Right players: Ronaldo + Yamal ── */}
+      <motion.div
+        className="absolute bottom-0 right-0 pointer-events-none select-none"
+        style={{ width: PLAYERS[1].width }}
+        initial={{ x: 120, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.9, ease: 'easeOut', delay: 0.1 }}
+      >
+        <img src={PLAYERS[1].src} alt={PLAYERS[1].name} className="w-full h-auto object-contain object-bottom"
+          style={{ filter: 'drop-shadow(8px 0 40px rgba(196,30,58,0.4))' }} />
+        <div className="absolute bottom-0 left-0 right-0 h-32"
+          style={{ background: 'linear-gradient(to top, #060912 0%, transparent 100%)' }} />
+      </motion.div>
 
       <motion.div
-        className="relative z-10 w-full max-w-md px-6"
+        className="absolute bottom-0 pointer-events-none select-none"
+        style={{ width: PLAYERS[2].width, right: PLAYERS[1].width - 60 }}
+        initial={{ x: 80, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.9, ease: 'easeOut', delay: 0.2 }}
+      >
+        <img src={PLAYERS[2].src} alt={PLAYERS[2].name} className="w-full h-auto object-contain object-bottom"
+          style={{ filter: 'drop-shadow(0 0 30px rgba(255,215,0,0.3))' }} />
+        <div className="absolute bottom-0 left-0 right-0 h-32"
+          style={{ background: 'linear-gradient(to top, #060912 0%, transparent 100%)' }} />
+      </motion.div>
+
+      {/* ── Login card ── */}
+      <motion.div
+        className="relative z-10 w-full max-w-sm px-6"
         initial={{ y: 40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
       >
-        {/* Logo / title */}
-        <div className="text-center mb-10">
-          <motion.div
-            className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center glow-gold"
-            style={{ background: 'linear-gradient(135deg, #C41E3A, #FFD700)' }}
-            animate={{ rotate: [0, 5, -5, 0] }}
-            transition={{ repeat: Infinity, duration: 4 }}
-          >
-            <span className="text-3xl">⚽</span>
-          </motion.div>
+        {/* Logo + title */}
+        <div className="text-center mb-8">
+          <motion.img
+            src={condorLogo}
+            alt="Condor IRIS"
+            className="h-20 mx-auto mb-4 object-contain logo-knockout"
+            animate={{ scale: [1, 1.04, 1] }}
+            transition={{ repeat: Infinity, duration: 3.5 }}
+          />
           <h1 className="font-orbitron text-3xl font-black text-white tracking-widest">
             CONDOR IFC
           </h1>
@@ -66,10 +122,10 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Login card */}
+        {/* Card */}
         <div
           className="rounded-2xl p-8 border border-white/10"
-          style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(20px)' }}
+          style={{ background: 'rgba(10,14,40,0.75)', backdropFilter: 'blur(24px)' }}
         >
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
