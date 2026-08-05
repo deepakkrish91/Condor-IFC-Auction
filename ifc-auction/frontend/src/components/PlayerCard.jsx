@@ -31,7 +31,7 @@ function StatRow({ label, value, color }) {
   )
 }
 
-export default function PlayerCard({ player, teamColor, teamName, showStatus = false }) {
+export default function PlayerCard({ player, teamColor, teamName, showStatus = false, largeImage = false }) {
   if (!player) return null
 
   const color      = teamColor || '#FFD700'
@@ -42,7 +42,7 @@ export default function PlayerCard({ player, teamColor, teamName, showStatus = f
   const shortName  = teamName ? teamName.substring(0, 3).toUpperCase() : 'IFC'
 
   return (
-    <div className="relative select-none" style={{ width: 260, paddingTop: 80 }}>
+    <div className="relative select-none" style={{ width: 260, paddingTop: largeImage ? 110 : 80 }}>
 
       {/* ── Cutout player image — overflows above card ── */}
       {imageUrl && (
@@ -51,8 +51,8 @@ export default function PlayerCard({ player, teamColor, teamName, showStatus = f
           style={{
             top: 0,
             transform: 'translateX(-50%)',
-            width: 220,
-            height: 240,
+            width: largeImage ? 260 : 220,
+            height: largeImage ? 290 : 240,
             overflow: 'hidden',
           }}
         >
@@ -136,8 +136,8 @@ export default function PlayerCard({ player, teamColor, teamName, showStatus = f
             </span>
           </div>
 
-          {/* Stat pills — left side */}
-          <div className="absolute left-3 bottom-4 z-20 flex flex-col gap-1.5">
+          {/* Stat pills — left side, anchored to top so image doesn't occlude values */}
+          <div className="absolute left-3 top-12 z-20 flex flex-col gap-1.5">
             {[
               { label: 'PAC', val: player.pace,        color: STAT_COLORS.pace },
               { label: 'TEC', val: player.technique,   color: STAT_COLORS.technique },
@@ -147,7 +147,7 @@ export default function PlayerCard({ player, teamColor, teamName, showStatus = f
               <div
                 key={s.label}
                 className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg"
-                style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: `1px solid ${s.color}44` }}
+                style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(8px)', border: `1px solid ${s.color}44` }}
               >
                 <span className="font-orbitron text-[9px] font-black" style={{ color: s.color }}>{s.label}</span>
                 <span className="font-orbitron text-sm font-black text-white">{s.val}</span>

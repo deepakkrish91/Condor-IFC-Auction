@@ -4,18 +4,17 @@ import PlayerCard from './PlayerCard'
 
 /* ── Shared AudioContext — created on first user gesture ── */
 let _audioCtx = null
-function getAudioCtx() {
-  // Reuse the one unlocked by App.jsx if available
+async function getAudioCtx() {
   if (window._sharedAudioCtx) _audioCtx = window._sharedAudioCtx
   if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-  if (_audioCtx.state === 'suspended') _audioCtx.resume()
+  if (_audioCtx.state === 'suspended') await _audioCtx.resume()
   return _audioCtx
 }
 
 /* ── Audio: hammer strikes (7s) then crowd cheer (13s) ── */
-function playSoldAudio() {
+async function playSoldAudio() {
   try {
-    const ctx = getAudioCtx()
+    const ctx = await getAudioCtx()
 
     /* Heavy hammer strike */
     function strike(t) {

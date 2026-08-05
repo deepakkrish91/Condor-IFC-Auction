@@ -260,6 +260,7 @@ export default function AdminDashboard() {
                   player={currentPlayer}
                   teamColor={currentTeam?.color || TIER_COLOR[currentPlayer.tier]}
                   teamName={currentTeam?.team_name}
+                  largeImage
                 />
               </div>
             ) : (
