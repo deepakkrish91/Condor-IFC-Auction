@@ -8,7 +8,7 @@ import { SoldOverlay, UnsoldOverlay, PlayerUpOverlay } from '../components/Overl
 import { useAuctionSocket } from '../hooks/useAuctionSocket'
 import condorLogo from '../assets/condor-iris-logo.png'
 
-const TIER_BASE = { 1: 50000, 2: 30000, 3: 25000 }
+const TIER_BASE = { 1: 50000, 2: 30000, 3: 20000 }
 const TIER_COLOR = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' }
 
 function formatINR(v) {

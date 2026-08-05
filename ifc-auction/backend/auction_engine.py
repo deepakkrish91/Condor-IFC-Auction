@@ -4,10 +4,10 @@ All monetary values are in Indian Rupees (INR).
 """
 
 MAX_BUDGET = 1_000_000        # Rs 10,00,000
-RESERVE_PER_PLAYER = 25_000   # Rs 25,000 reserve per remaining slot
-TIER_BASE_BID = {1: 50_000, 2: 30_000, 3: 25_000}
+RESERVE_PER_PLAYER = 20_000   # Rs 20,000 reserve per remaining slot
+TIER_BASE_BID = {1: 50_000, 2: 30_000, 3: 20_000}
 MARQUEE_VALUATION_MULTIPLIER = 1.25
-TOTAL_PLAYERS_PER_TEAM = 6    # excluding marquee
+TOTAL_PLAYERS_PER_TEAM = 7    # excluding marquee
 
 
 def available_bid_amount(team) -> int:

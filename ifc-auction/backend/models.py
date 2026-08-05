@@ -42,7 +42,7 @@ class Team(Base):
     marquee_valuation = Column(Integer, default=0)
     highest_bid = Column(Integer, default=0)
     gross_spent = Column(Integer, default=0)
-    players_needed = Column(Integer, default=6)  # 6 more after marquee
+    players_needed = Column(Integer, default=7)  # 7 more after marquee
     players = relationship("Player", back_populates="team")
 
 

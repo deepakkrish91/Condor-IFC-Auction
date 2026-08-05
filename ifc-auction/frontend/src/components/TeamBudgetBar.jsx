@@ -23,7 +23,7 @@ export default function TeamBudgetBar({ team }) {
             ₹{(team.available_to_bid / 1000).toFixed(0)}K avail
           </p>
           <p className="text-[10px] text-gray-500">
-            {6 - team.players_needed}/6 signed
+            {7 - team.players_needed}/7 signed
           </p>
         </div>
       </div>

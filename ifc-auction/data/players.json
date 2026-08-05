@@ -388,5 +388,50 @@
     "stamina": 68,
     "aggression": 72,
     "image": "anath.png"
+  },
+    {
+    "id": 27,
+    "name": "ANIL KUMAR",
+    "position": "Defender",
+    "tier": 3,
+    "jersey_number": 27,
+    "apartment": "10D",
+    "pace": 58,
+    "technique": 48,
+    "physicality": 72,
+    "vision": 55,
+    "stamina": 64,
+    "aggression": 75,
+    "image": "anil_kumar.png"
+  },
+    {
+    "id": 28,
+    "name": "MANU PILLAI",
+    "position": "Defender",
+    "tier": 3,
+    "jersey_number": 28,
+    "apartment": "5I",
+    "pace": 60,
+    "technique": 50,
+    "physicality": 81,
+    "vision": 60,
+    "stamina": 72,
+    "aggression": 72,
+    "image": "manu_pillai.png"
+  },
+    {
+    "id": 29,
+    "name": "SUBIN TEDDY",
+    "position": "Defender",
+    "tier": 3,
+    "jersey_number": 29,
+    "apartment": "6D",
+    "pace": 70,
+    "technique": 55,
+    "physicality": 85,
+    "vision": 70,
+    "stamina": 75,
+    "aggression": 75,
+    "image": "subin_teddy.png"
   }
 ]

@@ -37,7 +37,7 @@ export default function PlayerCard({ player, teamColor, teamName, showStatus = f
   const color      = teamColor || '#FFD700'
   const tierGlow   = TIER_GLOW[player.tier] || '#FFD700'
   const stars      = TIER_STARS[player.tier] || 1
-  const baseBid    = player.base_bid || (player.tier === 1 ? 50000 : player.tier === 2 ? 30000 : 25000)
+  const baseBid    = player.base_bid || (player.tier === 1 ? 50000 : player.tier === 2 ? 30000 : 20000)
   const imageUrl   = player.image ? `/${player.image}` : null
   const shortName  = teamName ? teamName.substring(0, 3).toUpperCase() : 'IFC'
 
