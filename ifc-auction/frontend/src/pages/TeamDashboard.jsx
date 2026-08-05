@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import api from '../api'
 import TeamBudgetBar from '../components/TeamBudgetBar'
 import condorLogo from '../assets/condor-iris-logo.png'
 
 export default function TeamDashboard() {
   const [teams, setTeams] = useState([])
+  const navigate = useNavigate()
 
   const fetchTeams = useCallback(async () => {
     const res = await api.get('/admin/teams')
@@ -36,6 +38,16 @@ export default function TeamDashboard() {
             Budget Overview · Admin View
           </p>
         </div>
+        <motion.button
+          onClick={() => navigate('/admin')}
+          className="absolute right-0 top-0 flex items-center gap-2 px-4 py-2 rounded-xl
+            font-orbitron text-xs font-bold tracking-widest uppercase text-white border border-white/10"
+          style={{ background: 'rgba(107,140,255,0.12)' }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.97 }}
+        >
+          ← Admin
+        </motion.button>
       </div>
 
       <div className="max-w-4xl mx-auto space-y-4">
