@@ -47,11 +47,18 @@ def health():
 @app.post("/auth/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     from fastapi import HTTPException, status
-    role = authenticate_user(form_data.username, form_data.password)
-    if not role:
+    auth = authenticate_user(form_data.username, form_data.password)
+    if not auth:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    token = create_access_token(role)
-    return {"access_token": token, "token_type": "bearer", "role": role}
+    # Embed role (as "role" key) and optional team_id into token
+    token_payload = {"role": auth["role"]}
+    if "team_id" in auth:
+        token_payload["team_id"] = auth["team_id"]
+    token = create_access_token(token_payload)
+    response = {"access_token": token, "token_type": "bearer", "role": auth["role"]}
+    if "team_id" in auth:
+        response["team_id"] = auth["team_id"]
+    return response
 
 
 app.include_router(admin_router)

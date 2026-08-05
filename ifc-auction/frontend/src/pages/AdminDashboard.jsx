@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import api from '../api'
 import toast from 'react-hot-toast'
 import PlayerCard from '../components/PlayerCard'
-import TeamBudgetBar from '../components/TeamBudgetBar'
 import { SoldOverlay, UnsoldOverlay, PlayerUpOverlay } from '../components/Overlays'
 import { useAuctionSocket } from '../hooks/useAuctionSocket'
 import condorLogo from '../assets/condor-iris-logo.png'
@@ -25,6 +25,7 @@ export default function AdminDashboard() {
   const [tierFilter, setTierFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   const fetchAll = useCallback(async () => {
     const [pRes, tRes, sRes] = await Promise.all([
@@ -384,16 +385,6 @@ export default function AdminDashboard() {
             </motion.div>
           )}
 
-          {/* Team Budgets */}
-          <div className="rounded-2xl border p-4"
-            style={{ background: 'rgba(107,140,255,0.07)', borderColor: 'rgba(107,140,255,0.2)' }}>
-            <h2 className="font-rajdhani text-sm uppercase tracking-widest text-gray-400 mb-3">
-              Team Budgets
-            </h2>
-            <div className="space-y-2">
-              {teams.map(t => <TeamBudgetBar key={t.id} team={t} />)}
-            </div>
-          </div>
         </div>
 
         {/* Right: Player List */}
@@ -488,6 +479,21 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Floating: View Team Budgets */}
+      <motion.button
+        onClick={() => navigate('/teams')}
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-5 py-3 rounded-2xl
+          font-orbitron text-xs font-bold tracking-widest uppercase text-white shadow-2xl"
+        style={{ background: 'linear-gradient(135deg, #1A3C6E, #4B6FFF)' }}
+        whileHover={{ scale: 1.06 }}
+        whileTap={{ scale: 0.97 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
+        📊 View Team Budgets
+      </motion.button>
     </div>
   )
 }

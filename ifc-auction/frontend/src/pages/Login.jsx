@@ -29,8 +29,15 @@ export default function Login() {
       })
       localStorage.setItem('token', res.data.access_token)
       localStorage.setItem('role', res.data.role)
-      if (res.data.role === 'admin') navigate('/admin')
-      else navigate('/teams')
+      if (res.data.team_id) {
+        localStorage.setItem('team_id', res.data.team_id)
+        navigate('/team')
+      } else if (res.data.role === 'admin') {
+        navigate('/admin')
+      } else {
+        // Legacy shared team login
+        navigate('/team')
+      }
     } catch {
       toast.error('Invalid credentials. Try again.')
     } finally {

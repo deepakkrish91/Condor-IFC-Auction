@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast'
 import Login from './pages/Login'
 import AdminDashboard from './pages/AdminDashboard'
 import TeamDashboard from './pages/TeamDashboard'
+import MyTeamDashboard from './pages/MyTeamDashboard'
 
 function PrivateRoute({ children, requiredRole }) {
   const token = localStorage.getItem('token')
@@ -31,6 +32,7 @@ export default function App() {
       window.removeEventListener('keydown', unlock)
     }
   }, [])
+
   return (
     <BrowserRouter>
       <Toaster
@@ -49,16 +51,28 @@ export default function App() {
       />
       <Routes>
         <Route path="/" element={<Login />} />
+
+        {/* Admin: full control panel */}
         <Route path="/admin" element={
           <PrivateRoute requiredRole="admin">
             <AdminDashboard />
           </PrivateRoute>
         } />
+
+        {/* Admin: all-teams budget overview (via floating button) */}
         <Route path="/teams" element={
-          <PrivateRoute>
+          <PrivateRoute requiredRole="admin">
             <TeamDashboard />
           </PrivateRoute>
         } />
+
+        {/* Per-team: individual team dashboard (only their own data) */}
+        <Route path="/team" element={
+          <PrivateRoute requiredRole="team">
+            <MyTeamDashboard />
+          </PrivateRoute>
+        } />
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
