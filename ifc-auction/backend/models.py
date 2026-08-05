@@ -25,6 +25,7 @@ class Player(Base):
     aggression = Column(Integer, default=70)
     status = Column(String, default="available")  # available | in_auction | sold | unsold
     final_bid = Column(Integer, nullable=True)
+    reaucted = Column(Boolean, default=False)  # True after going unsold in the re-auction round
     team_id = Column(Integer, ForeignKey("teams.id"), nullable=True)
     team = relationship("Team", back_populates="players")
 
@@ -51,8 +52,9 @@ class AuctionState(Base):
     id = Column(Integer, primary_key=True, default=1)
     current_player_id = Column(Integer, nullable=True)
     current_tier = Column(Integer, default=1)
-    phase = Column(String, default="idle")  # idle | live | sold | unsold | reauction
+    phase = Column(String, default="idle")  # idle | live | sold | unsold | reauction | reauction_round
     reauction_player_id = Column(Integer, nullable=True)
+    in_reauction_round = Column(Boolean, default=False)
 
 
 def get_db():

@@ -43,6 +43,13 @@ export default function AdminDashboard() {
     if (['player_sold', 'player_unsold', 'bid_blocked', 'auction_reset'].includes(msg.event)) {
       fetchAll()
     }
+    if (msg.event === 'reauction_round_start') {
+      fetchAll()
+      toast(`🔄 Re-Auction Round starting — ${msg.count} unsold player(s) back on block`, {
+        duration: 5000,
+        style: { background: '#92400e', color: '#fef3c7', fontWeight: 'bold' },
+      })
+    }
   })
 
   const [showResetConfirm, setShowResetConfirm] = useState(false)
@@ -137,6 +144,7 @@ export default function AdminDashboard() {
     sold: { text: 'Sold', color: '#22C55E' },
     unsold: { text: 'Unsold', color: '#9CA3AF' },
     reauction: { text: 'Re-auction Triggered', color: '#F59E0B' },
+    reauction_round: { text: 'Re-Auction Round', color: '#F59E0B' },
   }[state.phase] || { text: state.phase, color: '#fff' }
 
   return (

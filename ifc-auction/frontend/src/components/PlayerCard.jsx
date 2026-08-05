@@ -26,7 +26,7 @@ function StatRow({ label, value, color }) {
           style={{ '--target-width': `${value}%`, backgroundColor: color, width: `${value}%` }}
         />
       </div>
-      <span className="font-orbitron text-xs font-black w-6 text-right" style={{ color }}>{value}</span>
+      <span className="font-orbitron text-xs font-black w-8 text-right" style={{ color }}>{value}</span>
     </div>
   )
 }
@@ -139,7 +139,6 @@ export default function PlayerCard({ player, teamColor, teamName, showStatus = f
           {/* Stat pills — left side, anchored to top so image doesn't occlude values */}
           <div className="absolute left-3 top-12 z-20 flex flex-col gap-1.5">
             {[
-              { label: 'PAC', val: player.pace,        color: STAT_COLORS.pace },
               { label: 'TEC', val: player.technique,   color: STAT_COLORS.technique },
               { label: 'PHY', val: player.physicality, color: STAT_COLORS.physicality },
               { label: 'VIS', val: player.vision,      color: STAT_COLORS.vision },

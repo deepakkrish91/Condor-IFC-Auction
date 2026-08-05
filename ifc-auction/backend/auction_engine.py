@@ -12,15 +12,26 @@ TOTAL_PLAYERS_PER_TEAM = 6    # excluding marquee
 
 def available_bid_amount(team) -> int:
     """
-    Amount a team can bid right now.
-    = (max_budget - gross_spent) - (players_still_needed - 1) * reserve_per_player
-    The -1 accounts for the player currently being bid on.
+    Amount a team can bid right now, conservatively assuming the bid will become
+    the new highest bid (worst case: marquee valuation multiplier applies).
+
+    Derivation — after a winning bid `b` that beats highest_bid:
+        new_gross = gross_spent - old_valuation + b + b * MULTIPLIER
+        headroom  = MAX_BUDGET - new_gross - locked_reserve >= 0
+        => b * (1 + MULTIPLIER) <= MAX_BUDGET - (gross_spent - old_valuation) - locked_reserve
+        => b <= effective_headroom / (1 + MULTIPLIER)
+
+    If the bid does NOT beat highest_bid the multiplier won't apply, so the team
+    will have more room — this cap is always safe.
     """
     if team.players_needed <= 0:
         return 0
-    gross_remaining = MAX_BUDGET - team.gross_spent
     locked_reserve = (team.players_needed - 1) * RESERVE_PER_PLAYER
-    return max(0, gross_remaining - locked_reserve)
+    # Budget available after stripping out the old marquee valuation (it will be replaced)
+    effective_headroom = MAX_BUDGET - (team.gross_spent - team.marquee_valuation) - locked_reserve
+    # Divide by (1 + multiplier) to ensure bid + new_valuation fits within headroom
+    max_bid = int(effective_headroom / (1 + MARQUEE_VALUATION_MULTIPLIER))
+    return max(0, max_bid)
 
 
 def marquee_valuation_after_bid(team, bid_amount: int) -> int:

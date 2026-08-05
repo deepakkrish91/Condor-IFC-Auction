@@ -83,9 +83,40 @@ def get_state(db: Session = Depends(get_db), _=Depends(require_admin)):
 
 @router.post("/auction/start")
 async def start_auction(db: Session = Depends(get_db), _=Depends(require_admin)):
-    """Randomly pick the next available player from the current tier."""
+    """Randomly pick the next available player from the current tier (or re-auction pool)."""
     state = db.query(AuctionState).first()
 
+    # ── Re-auction round: pick from players reset to available after being unsold ──
+    if state.in_reauction_round:
+        available = (
+            db.query(Player)
+            .filter(Player.status == "available")
+            .all()
+        )
+        if not available:
+            state.phase = "idle"
+            state.in_reauction_round = False
+            db.commit()
+            await broadcaster.broadcast({"event": "auction_complete"})
+            return {"message": "Re-auction round complete. Auction finished."}
+
+        player = random.choice(available)
+        player.status = "in_auction"
+        state.current_player_id = player.id
+        state.phase = "live"
+        db.commit()
+        db.refresh(player)
+
+        payload = {
+            "event": "player_up",
+            "player": _player_dict(player),
+            "tier": player.tier,
+            "is_reauction": True,
+        }
+        await broadcaster.broadcast(payload)
+        return payload
+
+    # ── Normal round: pick from current tier ──
     available = (
         db.query(Player)
         .filter(Player.tier == state.current_tier, Player.status == "available")
@@ -96,6 +127,20 @@ async def start_auction(db: Session = Depends(get_db), _=Depends(require_admin))
         # Try advancing tier
         next_tier = state.current_tier + 1
         if next_tier > 3:
+            # All tiers done — check for unsold players before finishing
+            unsold = db.query(Player).filter(Player.status == "unsold").all()
+            if unsold:
+                # Reset only players that haven't already been through the re-auction pass
+                eligible = [p for p in unsold if not p.reaucted]
+                if eligible:
+                    for p in eligible:
+                        p.status = "available"
+                    state.phase = "reauction_round"
+                    state.in_reauction_round = True
+                    db.commit()
+                    await broadcaster.broadcast({"event": "reauction_round_start", "count": len(eligible)})
+                    return {"message": f"Starting re-auction round for {len(eligible)} unsold player(s)."}
+
             state.phase = "idle"
             db.commit()
             await broadcaster.broadcast({"event": "auction_complete"})
@@ -132,6 +177,7 @@ async def start_auction(db: Session = Depends(get_db), _=Depends(require_admin))
         "event": "player_up",
         "player": _player_dict(player),
         "tier": state.current_tier,
+        "is_reauction": False,
     }
     await broadcaster.broadcast(payload)
     return payload
@@ -204,8 +250,11 @@ async def unsold_player(req: UnsoldRequest, db: Session = Depends(get_db), _=Dep
     if not player:
         raise HTTPException(status_code=404, detail="Player not found.")
 
-    player.status = "unsold"
     state = db.query(AuctionState).first()
+    player.status = "unsold"
+    # Mark permanently unsold if this is the re-auction round — won't be eligible again
+    if state.in_reauction_round:
+        player.reaucted = True
     state.phase = "unsold"
     state.current_player_id = None
     db.commit()
