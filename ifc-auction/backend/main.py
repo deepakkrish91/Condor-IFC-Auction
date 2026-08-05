@@ -63,6 +63,14 @@ frontend_dist = Path(__file__).parent.parent / "frontend" / "dist"
 if frontend_dist.exists():
     app.mount("/assets", StaticFiles(directory=frontend_dist / "assets"), name="assets")
 
+    # Serve all static files from dist root (player images, team logos, favicons etc.)
+    from fastapi.responses import Response
+    import mimetypes
+
     @app.get("/{full_path:path}")
     def serve_frontend(full_path: str):
+        file_path = frontend_dist / full_path
+        if file_path.is_file():
+            mime, _ = mimetypes.guess_type(str(file_path))
+            return Response(file_path.read_bytes(), media_type=mime or "application/octet-stream")
         return FileResponse(frontend_dist / "index.html")
