@@ -56,7 +56,8 @@
     "physicality": 72,
     "vision": 81,
     "stamina": 77,
-    "aggression": 68
+    "aggression": 68,
+    "image": "adarsh.png"
   },
   {
     "id": 5,
@@ -70,7 +71,8 @@
     "physicality": 85,
     "vision": 65,
     "stamina": 80,
-    "aggression": 83
+    "aggression": 83,
+    "image": "ajay.png"
   },
   {
     "id": 6,
@@ -84,7 +86,8 @@
     "physicality": 74,
     "vision": 76,
     "stamina": 79,
-    "aggression": 70
+    "aggression": 70,
+    "image": "dr_anup.png"
   },
   {
     "id": 7,
@@ -98,7 +101,8 @@
     "physicality": 73,
     "vision": 74,
     "stamina": 78,
-    "aggression": 72
+    "aggression": 72,
+    "image": "rajeev.png"
   },
   {
     "id": 8,
@@ -112,7 +116,8 @@
     "physicality": 70,
     "vision": 78,
     "stamina": 76,
-    "aggression": 66
+    "aggression": 66,
+    "image": "dr_reni.png"
   },
   {
     "id": 9,
@@ -126,7 +131,8 @@
     "physicality": 62,
     "vision": 60,
     "stamina": 67,
-    "aggression": 60
+    "aggression": 60,
+    "image": "adith.png"
   },
   {
     "id": 10,
@@ -140,7 +146,8 @@
     "physicality": 76,
     "vision": 55,
     "stamina": 70,
-    "aggression": 74
+    "aggression": 74,
+    "image": "anekh.png"
   },
   {
     "id": 11,
@@ -154,7 +161,8 @@
     "physicality": 60,
     "vision": 72,
     "stamina": 64,
-    "aggression": 55
+    "aggression": 55,
+    "image": "anoop.png"
   },
   {
     "id": 12,
@@ -168,7 +176,8 @@
     "physicality": 68,
     "vision": 64,
     "stamina": 60,
-    "aggression": 54
+    "aggression": 54,
+    "image": "anzy.png"
   },
   {
     "id": 13,
@@ -182,7 +191,8 @@
     "physicality": 58,
     "vision": 70,
     "stamina": 62,
-    "aggression": 52
+    "aggression": 52,
+    "image": "biju.png"
   },
   {
     "id": 14,
@@ -196,7 +206,8 @@
     "physicality": 74,
     "vision": 53,
     "stamina": 68,
-    "aggression": 72
+    "aggression": 72,
+    "image": "deepak.png"
   },
   {
     "id": 15,
@@ -210,7 +221,8 @@
     "physicality": 60,
     "vision": 58,
     "stamina": 65,
-    "aggression": 58
+    "aggression": 58,
+    "image": "edwin.png"
   },
   {
     "id": 16,
@@ -224,7 +236,8 @@
     "physicality": 70,
     "vision": 66,
     "stamina": 62,
-    "aggression": 53
+    "aggression": 53,
+    "image": "hari_kochath.png"
   },
   {
     "id": 17,
@@ -238,7 +251,8 @@
     "physicality": 78,
     "vision": 52,
     "stamina": 72,
-    "aggression": 76
+    "aggression": 76,
+    "image": "harikrishnan.png"
   },
   {
     "id": 18,
@@ -252,7 +266,8 @@
     "physicality": 56,
     "vision": 74,
     "stamina": 60,
-    "aggression": 50
+    "aggression": 50,
+    "image": "shubham.png"
   },
   {
     "id": 19,
@@ -266,7 +281,8 @@
     "physicality": 58,
     "vision": 56,
     "stamina": 63,
-    "aggression": 56
+    "aggression": 56,
+    "image": "jenson.png"
   },
   {
     "id": 20,
@@ -280,7 +296,8 @@
     "physicality": 80,
     "vision": 50,
     "stamina": 74,
-    "aggression": 78
+    "aggression": 78,
+    "image": "mithun.png"
   },
   {
     "id": 21,
@@ -294,7 +311,8 @@
     "physicality": 76,
     "vision": 48,
     "stamina": 70,
-    "aggression": 74
+    "aggression": 74,
+    "image": "mohan.png"
   },
   {
     "id": 22,
@@ -308,7 +326,8 @@
     "physicality": 54,
     "vision": 68,
     "stamina": 58,
-    "aggression": 48
+    "aggression": 48,
+    "image": "sherin.png"
   },
   {
     "id": 23,
@@ -322,7 +341,8 @@
     "physicality": 66,
     "vision": 62,
     "stamina": 58,
-    "aggression": 51
+    "aggression": 51,
+    "image": "subin_mathew_sebastian.png"
   },
   {
     "id": 24,
@@ -336,7 +356,8 @@
     "physicality": 72,
     "vision": 46,
     "stamina": 66,
-    "aggression": 70
+    "aggression": 70,
+    "image": "tharian_tom.png"
   },
   {
     "id": 25,
@@ -350,7 +371,8 @@
     "physicality": 74,
     "vision": 50,
     "stamina": 68,
-    "aggression": 72
+    "aggression": 72,
+    "image": "varun.png"
   },
   {
     "id": 26,
@@ -364,6 +386,7 @@
     "physicality": 78,
     "vision": 65,
     "stamina": 68,
-    "aggression": 72
+    "aggression": 72,
+    "image": "anath.png"
   }
 ]

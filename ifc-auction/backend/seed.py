@@ -31,6 +31,7 @@ def _load_data(db):
             tier=p["tier"],
             jersey_number=p["jersey_number"],
             apartment=p.get("apartment"),
+            image=p.get("image"),
             pace=p.get("pace", 70),
             technique=p.get("technique", 70),
             physicality=p.get("physicality", 70),

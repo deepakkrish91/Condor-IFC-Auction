@@ -16,6 +16,7 @@ class Player(Base):
     tier = Column(Integer, nullable=False)
     jersey_number = Column(Integer, nullable=False)
     apartment = Column(String, nullable=True)
+    image = Column(String, nullable=True)
     pace = Column(Integer, default=70)
     technique = Column(Integer, default=70)
     physicality = Column(Integer, default=70)

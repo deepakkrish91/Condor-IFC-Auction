@@ -16,6 +16,7 @@ def _player_dict(p: Player) -> dict:
         "tier": p.tier,
         "jersey_number": p.jersey_number,
         "apartment": p.apartment,
+        "image": p.image,
         "status": p.status,
         "final_bid": p.final_bid,
         "base_bid": TIER_BASE_BID[p.tier],

@@ -23,7 +23,7 @@ def _player_dict(p: Player) -> dict:
         "tier": p.tier,
         "jersey_number": p.jersey_number,
         "apartment": p.apartment,
-        "pace": p.pace,
+        "image": p.image,
         "technique": p.technique,
         "physicality": p.physicality,
         "vision": p.vision,
