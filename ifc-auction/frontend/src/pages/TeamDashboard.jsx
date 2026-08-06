@@ -80,7 +80,7 @@ export default function TeamDashboard() {
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xs text-gray-500 uppercase tracking-widest">Available</p>
+                  <p className="text-xs text-gray-500 uppercase tracking-widest">Max Offer</p>
                   <p className="font-orbitron text-lg font-black text-green-400">
                     ₹{t.available_to_bid.toLocaleString('en-IN')}
                   </p>
@@ -100,7 +100,7 @@ export default function TeamDashboard() {
               </div>
             </div>
 
-            <TeamBudgetBar team={t} />
+            <TeamBudgetBar team={t} showAvail />
 
             {/* Signed players list */}
             {t.players.length > 0 && (

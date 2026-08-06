@@ -119,12 +119,6 @@ export default function MyTeamDashboard() {
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-gray-500 uppercase tracking-widest">Available Now</p>
-                <p className="font-orbitron text-xl font-black text-green-400">
-                  ₹{team.available_to_bid.toLocaleString('en-IN')}
-                </p>
-              </div>
-              <div className="text-center">
                 <p className="text-xs text-gray-500 uppercase tracking-widest">Players Needed</p>
                 <p className="font-orbitron text-xl font-black text-yellow-400">
                   {team.players_needed}

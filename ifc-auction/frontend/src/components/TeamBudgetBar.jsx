@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 
 const MAX_BUDGET = 1_000_000
 
-export default function TeamBudgetBar({ team }) {
+export default function TeamBudgetBar({ team, showAvail = false }) {
   const pct = Math.max(0, Math.min(100, ((MAX_BUDGET - team.gross_spent) / MAX_BUDGET) * 100))
   const availPct = Math.max(0, Math.min(100, (team.available_to_bid / MAX_BUDGET) * 100))
 
@@ -19,9 +19,11 @@ export default function TeamBudgetBar({ team }) {
           <p className="text-xs text-gray-400">{team.marquee_player_name}</p>
         </div>
         <div className="text-right">
-          <p className="font-orbitron text-xs font-bold text-yellow-400">
-            ₹{(team.available_to_bid / 1000).toFixed(0)}K avail
-          </p>
+          {showAvail && (
+            <p className="font-orbitron text-xs font-bold text-yellow-400">
+              ₹{(team.available_to_bid / 1000).toFixed(0)}K avail
+            </p>
+          )}
           <p className="text-[10px] text-gray-500">
             {7 - team.players_needed}/7 signed
           </p>
